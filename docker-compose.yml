@@ -1,0 +1,44 @@
+version: "3.3"
+
+services:
+  # manga:
+  #   depends_on:
+  #     - postgres
+  #   build:
+  #     context: ./
+  #     dockerfile: Dockerfile
+  #     args:
+  #       buildno: 1
+  #   environment:
+  #     MANGAWEB_DB: "mongodb://root:password@mongo"
+  #     MANGAWEB_DATA_PATH: "/data"
+  #   volumes:
+  #     - ./data:/data
+  #   ports:
+  #     - "8080:80"
+  #   networks:
+  #     - backend
+
+  postgres:
+    image: postgres:15.4
+    networks:
+      - backend
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "manga"
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    networks:
+      - backend
+    ports:
+      - "8081:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@example.com"
+      PGADMIN_DEFAULT_PASSWORD: "password"
+
+networks:
+  backend:
