@@ -1,16 +1,17 @@
 <script lang="ts">
-    // import Toolbar from "./Browse/Toolbar.svelte";
-    // import ModalDialog from "./Common/ModalDialog.svelte";
-    import Item from "./Item.svelte";
-    // import Pagination from "./Common/Pagination.svelte";
-    // import PageItem from "./Common/PageItem.svelte";
-    // import Toast from "./Common/Toast.svelte";
-    import type { PageData } from './$types';
-    import { Container, Icon } from 'sveltestrap';
+	// import Toolbar from "./Browse/Toolbar.svelte";
+	// import ModalDialog from "./Common/ModalDialog.svelte";
+	import Item from './Item.svelte';
+	// import Pagination from "./Common/Pagination.svelte";
+	// import PageItem from "./Common/PageItem.svelte";
+	// import Toast from "./Common/Toast.svelte";
+	import type { PageData } from './$types';
+	import { Container, Icon } from 'sveltestrap';
+	import MoveToTop from '$lib/MoveToTop.svelte';
 
-    export let data: PageData;
+	export let data: PageData;
 
-    /*
+	/*
     let toast;
     let tagFavorite = params.TagFavorite;
     let aboutDialog;
@@ -118,16 +119,16 @@
 /-->
 
 <div class="container-fluid" style="padding-top:100px;">
-    <div class="grid-container">
-        {#each data.items as item}
-            <Item
-                favorite={item.favorite}
-                isRead={item.is_read}
-                id={item.id.toString()}
-                name={item.name}
-            />
-        {/each}
-    </div>
+	<div class="grid-container">
+		{#each data.items as item}
+			<Item
+				favorite={item.favorite}
+				isRead={item.is_read}
+				id={item.id.toString()}
+				name={item.name}
+			/>
+		{/each}
+	</div>
 </div>
 <div style="height: 100px;" />
 
@@ -153,12 +154,4 @@
 
 <!-- Toast bind:this={toast} /-->
 
-<nav
-    aria-label="Move to top navigation"
-    class="position-fixed bottom-0 end-0 p-3"
->
-    <a class="btn btn-secondary" href="#top">
-        <Icon name="chevron-double-up" />
-        <span class="d-none d-sm-block">Top</span>
-    </a>
-</nav>
+<MoveToTop />

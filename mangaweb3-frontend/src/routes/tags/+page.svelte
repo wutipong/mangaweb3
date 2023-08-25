@@ -1,10 +1,11 @@
 <script lang="ts">
-	import { Container, Icon } from 'sveltestrap';
+	import { Container, Icon, Button } from 'sveltestrap';
 	import { page } from '$app/stores';
 	import Item from './Item.svelte';
 	import Toolbar from './Toolbar.svelte';
 	import type { PageData } from './$types';
-	import type AboutDialog from '$lib/AboutDialog.svelte';
+	import AboutDialog from '$lib/AboutDialog.svelte';
+	import MoveToTop from '$lib/MoveToTop.svelte';
 	import { getBackendBaseURL } from '$lib/config';
 
 	export let data: PageData;
@@ -20,14 +21,14 @@
 		aboutDialog.show();
 	}
 
-	function CreateThumbnailUrl(name: string) {
+	function createThumbnailUrl(name: string) {
 		const output = new URL('/tag/thumbnail', getBackendBaseURL());
 		output.searchParams.append('tag', name);
 
 		return output;
 	}
 
-	function CreateBrowseURL(name: string) {
+	function createBrowseURL(name: string) {
 		const output = new URL('/browse', $page.url.origin);
 		output.searchParams.append('tag', name);
 
@@ -35,14 +36,14 @@
 	}
 </script>
 
-<!-- Toolbar
-    title={params.Title}
-    browseURL={params.BrowseURL}
-    tagListURL={params.TagListURL}
-    onFilterFavorite={toggleFavoriteOnly}
-    {favoriteOnly}
-    {onAboutClick}
-/-->
+<Toolbar
+	title="Tag List"
+	browseURL={new URL('/browse', $page.url.origin).toString()}
+	tagListURL={$page.url.toString()}
+	onFilterFavorite={toggleFavoriteOnly}
+	{favoriteOnly}
+	{onAboutClick}
+/>
 
 <Container fluid style="padding-top:100px;">
 	<div class="grid-container">
@@ -52,19 +53,14 @@
 					name={tag.name}
 					favorite={tag.favorite}
 					id={tag.id.toString()}
-					url={CreateBrowseURL(tag.name).toString()}
-					thumbnailURL={CreateThumbnailUrl(tag.name).toString()}
+					url={createBrowseURL(tag.name).toString()}
+					thumbnailURL={createThumbnailUrl(tag.name).toString()}
 				/>
 			{/if}
 		{/each}
 	</div>
 </Container>
 
-<!-- AboutDialog bind:this={aboutDialog} version={params.Version} /-->
+<AboutDialog bind:this={aboutDialog} version={'development'} />
 
-<nav aria-label="Move to top navigation" class="position-fixed bottom-0 end-0 p-3">
-	<a class="btn btn-secondary" href="#top">
-		<Icon name="chevron-double-up" />
-		<span class="d-none d-sm-block">Top</span>
-	</a>
-</nav>
+<MoveToTop/>
