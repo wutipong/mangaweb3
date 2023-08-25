@@ -1,3 +1,164 @@
-<h1>About this site</h1>
-<p>TODO...</p>
-<a href="/">Home</a>
+<script lang="ts">
+    // import Toolbar from "./Browse/Toolbar.svelte";
+    // import ModalDialog from "./Common/ModalDialog.svelte";
+    import Item from "./Item.svelte";
+    // import Pagination from "./Common/Pagination.svelte";
+    // import PageItem from "./Common/PageItem.svelte";
+    // import Toast from "./Common/Toast.svelte";
+    import type { PageData } from './$types';
+    import { Container, Icon } from 'sveltestrap';
+
+    export let data: PageData;
+
+    /*
+    let toast;
+    let tagFavorite = params.TagFavorite;
+    let aboutDialog;
+
+    function changeSort(sortBy) {
+        let url = window.location;
+        let searchParams = new URLSearchParams(url.search);
+        searchParams.set("sort", sortBy);
+
+        if (sortBy === "name") {
+            searchParams.set("order", "ascending");
+        } else if (sortBy === "createTime") {
+            searchParams.set("order", "descending");
+        }
+
+        searchParams.delete("page");
+
+        url.search = searchParams.toString();
+    }
+
+    function changeOrder(order) {
+        let url = window.location;
+        let searchParams = new URLSearchParams(url.search);
+
+        searchParams.set("order", order);
+
+        url.search = searchParams.toString();
+    }
+
+    function onFilterFavorite() {
+        let url = window.location;
+        let searchParams = new URLSearchParams(url.search);
+
+        let isFavorite = params.FavoriteOnly;
+        searchParams.set("favorite", (!isFavorite).toString());
+
+        url.search = searchParams.toString();
+    }
+
+    async function rescanLibrary() {
+        const url = params.RescanURL;
+        await fetch(url);
+        toast.show(
+            "Re-scan Library",
+            "Library re-scanning in progress. Please refresh after a few minutes."
+        );
+    }
+
+    async function onTagFavorite() {
+        tagFavorite = !tagFavorite;
+
+        const urlSearchParams = new URLSearchParams();
+        urlSearchParams.set("favorite", tagFavorite.toString());
+
+        const url = new URL(params.SetTagFavoriteURL, window.location.origin);
+        url.search = urlSearchParams.toString();
+
+        const resp = await fetch(url);
+        const json = await resp.json();
+
+        if (json.favorite) {
+            toast.show(
+                "Favorite",
+                `The tag "${params.Tag}" is now your favorite.`
+            );
+        } else {
+            toast.show(
+                "Favorite",
+                `The tag "${params.Tag}" is no longer your favorite.`
+            );
+        }
+    }
+
+    function onSearchClick(t) {
+        let searchText = t;
+        let url = window.location;
+        let searchParams = new URLSearchParams(url.search);
+        searchParams.set("search", searchText);
+
+        url.search = searchParams.toString();
+    }
+
+    function onAboutClick() {
+        aboutDialog.show();
+    } */
+</script>
+
+<!--Toolbar
+    Title={params.Title}
+    BrowseURL={params.BrowseURL}
+    TagListURL={params.TagListURL}
+    SortBy={params.SortBy}
+    SortOrder={params.SortOrder}
+    FavoriteOnly={params.FavoriteOnly}
+    Tag={params.Tag}
+    TagFavorite={tagFavorite}
+    {changeSort}
+    {changeOrder}
+    {onFilterFavorite}
+    {rescanLibrary}
+    {onTagFavorite}
+    {onSearchClick}
+    SearchText={params.SearchText}
+    {onAboutClick}
+/-->
+
+<div class="container-fluid" style="padding-top:100px;">
+    <div class="grid-container">
+        {#each data.items as item}
+            <Item
+                favorite={item.favorite}
+                isRead={item.is_read}
+                id={item.id.toString()}
+                name={item.name}
+            />
+        {/each}
+    </div>
+</div>
+<div style="height: 100px;" />
+
+<!-- Pagination>
+    {#each params.Pages as page}
+        <PageItem
+            IsActive={page.IsActive}
+            IsEnabled={page.IsEnabled}
+            IsHiddenOnSmall={page.IsHiddenOnSmall}
+            URL={page.LinkURL}
+            Content={page.Content}
+        />
+    {/each}
+</Pagination -->
+
+<!-- ModalDialog Id="aboutModal" Title="About" bind:this={aboutDialog}>
+    <h5>MangaWeb</h5>
+    <h6>Version {params.Version}</h6>
+    <p>&copy; 2021-2023 Wutipong Wongsakuldej. All Right Reserved</p>
+    <p>Licensed under MIT License</p>
+    <p><a href="https://github.com/wutipong/mangaweb">Homepage</a></p>
+</ModalDialog -->
+
+<!-- Toast bind:this={toast} /-->
+
+<nav
+    aria-label="Move to top navigation"
+    class="position-fixed bottom-0 end-0 p-3"
+>
+    <a class="btn btn-secondary" href="#top">
+        <Icon name="chevron-double-up" />
+        <span class="d-none d-sm-block">Top</span>
+    </a>
+</nav>
