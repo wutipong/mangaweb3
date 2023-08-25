@@ -5,6 +5,7 @@
 	import Toolbar from '$lib/tags/Toolbar.svelte';
 	import type { PageData } from './$types';
 	import type AboutDialog from '$lib/AboutDialog.svelte';
+	import { getBackendBaseURL } from '$lib/config';
 
 	export let data: PageData;
 
@@ -20,7 +21,7 @@
 	}
 
 	function CreateThumbnailUrl(name: string) {
-		const output = new URL('/tag/thumbnail', 'http://localhost:8972');
+		const output = new URL('/tag/thumbnail', getBackendBaseURL());
 		output.searchParams.append('tag', name);
 
 		return output;
