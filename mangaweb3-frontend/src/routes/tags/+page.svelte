@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Container, Icon } from 'sveltestrap';
 	import { page } from '$app/stores';
-	import Item from '$lib/tags/Item.svelte';
-	import Toolbar from '$lib/tags/Toolbar.svelte';
+	import Item from './Item.svelte';
+	import Toolbar from './Toolbar.svelte';
 	import type { PageData } from './$types';
 	import type AboutDialog from '$lib/AboutDialog.svelte';
 	import { getBackendBaseURL } from '$lib/config';
