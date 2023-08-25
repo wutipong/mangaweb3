@@ -1,126 +1,194 @@
 <script lang="ts">
-	// import Toolbar from "./Browse/Toolbar.svelte";
-	// import ModalDialog from "./Common/ModalDialog.svelte";
+	import Toolbar from './Toolbar.svelte';
 	import Item from './Item.svelte';
 	// import Pagination from "./Common/Pagination.svelte";
 	// import PageItem from "./Common/PageItem.svelte";
-	// import Toast from "./Common/Toast.svelte";
-	import type { PageData } from './$types';
-	import { Container, Icon } from 'sveltestrap';
+	import Toast from '$lib/Toast.svelte';
 	import MoveToTop from '$lib/MoveToTop.svelte';
+	import AboutDialog from '$lib/AboutDialog.svelte';
+	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+	import { getBackendBaseURL } from '$lib/config';
 
-	export let data: PageData;
+	interface Request {
+		favorite_only: boolean;
+		item_per_page: number;
+		order: 'ascending' | 'descending';
+		page: number;
+		search: string;
+		sort: 'name' | 'createTime';
+		tag: string;
+	}
 
-	/*
-    let toast;
-    let tagFavorite = params.TagFavorite;
-    let aboutDialog;
+	interface Item {
+		create_time: string;
+		favorite: boolean;
+		id: number;
+		is_read: boolean;
+		name: string;
+	}
 
-    function changeSort(sortBy) {
-        let url = window.location;
-        let searchParams = new URLSearchParams(url.search);
-        searchParams.set("sort", sortBy);
+	interface Page {
+		content: string;
+		is_active: boolean;
+		is_enabled: boolean;
+		is_hidden_on_small: boolean;
+		link_url: string;
+	}
 
-        if (sortBy === "name") {
-            searchParams.set("order", "ascending");
-        } else if (sortBy === "createTime") {
-            searchParams.set("order", "descending");
-        }
+	interface Response {
+		items: Item[];
+		pages: Page[];
+		tag_favorite: boolean;
+		total_page: number;
+	}
 
-        searchParams.delete("page");
+	let toast: Toast;
+	let aboutDialog: AboutDialog;
 
-        url.search = searchParams.toString();
-    }
+	let request: Request = {
+		favorite_only: false,
+		item_per_page: 30,
+		order: 'descending',
+		page: 0,
+		search: '',
+		sort: 'createTime',
+		tag: ''
+	};
+	let response: Response = {
+		items: [],
+		pages: [],
+		tag_favorite: true,
+		total_page: 0
+	};
 
-    function changeOrder(order) {
-        let url = window.location;
-        let searchParams = new URLSearchParams(url.search);
+	onMount(async () => {
+		const params = $page.url.searchParams;
+		if (params.has('favorite_only')) {
+			request.favorite_only = params.get('favorite_only') == 'true';
+		}
 
-        searchParams.set("order", order);
+		if (params.has('order')) {
+			const v = params.get('order');
+			if (v == 'ascending') {
+				request.order = 'ascending';
+			} else if (v == 'descending') {
+				request.order = 'descending';
+			}
+		}
 
-        url.search = searchParams.toString();
-    }
+		if (params.has('tag')) {
+			request.tag = params.get('tag') as string;
+		}
 
-    function onFilterFavorite() {
-        let url = window.location;
-        let searchParams = new URLSearchParams(url.search);
+		let u = new URL('/browse', getBackendBaseURL());
+		const r = await fetch(u, { method: 'POST', body: JSON.stringify(request) });
+		response = await r.json();
+	});
 
-        let isFavorite = params.FavoriteOnly;
-        searchParams.set("favorite", (!isFavorite).toString());
+	function changeSort(sortBy: string) {
+		let url = window.location;
+		let searchParams = new URLSearchParams(url.search);
+		searchParams.set('sort', sortBy);
 
-        url.search = searchParams.toString();
-    }
+		if (sortBy === 'name') {
+			searchParams.set('order', 'ascending');
+		} else if (sortBy === 'createTime') {
+			searchParams.set('order', 'descending');
+		}
 
-    async function rescanLibrary() {
-        const url = params.RescanURL;
-        await fetch(url);
-        toast.show(
-            "Re-scan Library",
-            "Library re-scanning in progress. Please refresh after a few minutes."
-        );
-    }
+		searchParams.delete('page');
 
-    async function onTagFavorite() {
-        tagFavorite = !tagFavorite;
+		url.search = searchParams.toString();
+	}
 
-        const urlSearchParams = new URLSearchParams();
-        urlSearchParams.set("favorite", tagFavorite.toString());
+	function changeOrder(order: string) {
+		let url = window.location;
+		let searchParams = new URLSearchParams(url.search);
 
-        const url = new URL(params.SetTagFavoriteURL, window.location.origin);
-        url.search = urlSearchParams.toString();
+		searchParams.set('order', order);
 
-        const resp = await fetch(url);
-        const json = await resp.json();
+		url.search = searchParams.toString();
+	}
 
-        if (json.favorite) {
-            toast.show(
-                "Favorite",
-                `The tag "${params.Tag}" is now your favorite.`
-            );
-        } else {
-            toast.show(
-                "Favorite",
-                `The tag "${params.Tag}" is no longer your favorite.`
-            );
-        }
-    }
+	function onFilterFavorite() {
+		let url = window.location;
+		let searchParams = new URLSearchParams(url.search);
 
-    function onSearchClick(t) {
-        let searchText = t;
-        let url = window.location;
-        let searchParams = new URLSearchParams(url.search);
-        searchParams.set("search", searchText);
+		let isFavorite = request.favorite_only;
+		searchParams.set('favorite', (!isFavorite).toString());
 
-        url.search = searchParams.toString();
-    }
+		url.search = searchParams.toString();
+	}
 
-    function onAboutClick() {
-        aboutDialog.show();
-    } */
+	async function rescanLibrary() {
+		const url = new URL('/browse/rescan_library', getBackendBaseURL());
+		await fetch(url);
+		toast.show(
+			'Re-scan Library',
+			'Library re-scanning in progress. Please refresh after a few minutes.'
+		);
+	}
+
+	async function onTagFavorite() {
+		const urlSearchParams = new URLSearchParams();
+		urlSearchParams.set('favorite', response.tag_favorite.toString());
+
+		const req = {
+			favorite: !response.tag_favorite,
+			tag: request.tag
+		};
+
+		const url = new URL('/tag/set_favorite', window.location.origin);
+
+		const resp = await fetch(url, { method: 'POST', body: JSON.stringify(req) });
+		const json = await resp.json();
+
+		if (json.favorite) {
+			toast.show('Favorite', `The tag "${request.tag}" is now your favorite.`);
+		} else {
+			toast.show('Favorite', `The tag "${request.tag}" is no longer your favorite.`);
+		}
+
+		response.tag_favorite = json.favorite;
+	}
+
+	function onSearchClick(t: string) {
+		let searchText = t;
+		let url = window.location;
+		let searchParams = new URLSearchParams(url.search);
+		searchParams.set('search', searchText);
+
+		url.search = searchParams.toString();
+	}
+
+	function onAboutClick() {
+		aboutDialog.show();
+	}
 </script>
 
-<!--Toolbar
-    Title={params.Title}
-    BrowseURL={params.BrowseURL}
-    TagListURL={params.TagListURL}
-    SortBy={params.SortBy}
-    SortOrder={params.SortOrder}
-    FavoriteOnly={params.FavoriteOnly}
-    Tag={params.Tag}
-    TagFavorite={tagFavorite}
-    {changeSort}
-    {changeOrder}
-    {onFilterFavorite}
-    {rescanLibrary}
-    {onTagFavorite}
-    {onSearchClick}
-    SearchText={params.SearchText}
-    {onAboutClick}
-/-->
+<Toolbar
+	Title={request.tag == '' ? 'Browse' : `Browse ${request.tag}`}
+	BrowseURL={new URL('/browse', $page.url.origin).toString()}
+	TagListURL={new URL('/tags', $page.url.origin).toString()}
+	SortBy={request.sort}
+	SortOrder={request.order}
+	FavoriteOnly={request.favorite_only}
+	Tag={request.tag}
+	TagFavorite={response.tag_favorite}
+	{changeSort}
+	{changeOrder}
+	{onFilterFavorite}
+	{rescanLibrary}
+	{onTagFavorite}
+	{onSearchClick}
+	SearchText={request.search}
+	{onAboutClick}
+/>
 
 <div class="container-fluid" style="padding-top:100px;">
 	<div class="grid-container">
-		{#each data.items as item}
+		{#each response.items as item}
 			<Item
 				favorite={item.favorite}
 				isRead={item.is_read}
@@ -144,14 +212,8 @@
     {/each}
 </Pagination -->
 
-<!-- ModalDialog Id="aboutModal" Title="About" bind:this={aboutDialog}>
-    <h5>MangaWeb</h5>
-    <h6>Version {params.Version}</h6>
-    <p>&copy; 2021-2023 Wutipong Wongsakuldej. All Right Reserved</p>
-    <p>Licensed under MIT License</p>
-    <p><a href="https://github.com/wutipong/mangaweb">Homepage</a></p>
-</ModalDialog -->
-
-<!-- Toast bind:this={toast} /-->
+<Toast bind:this={toast} />
 
 <MoveToTop />
+
+<AboutDialog bind:this={aboutDialog} />
