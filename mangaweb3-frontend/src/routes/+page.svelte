@@ -1,7 +1,3 @@
-<script lang="ts">
-    import {redirect} from "@sveltejs/kit"
-
-    export function load() {
-        throw redirect(308, "/browse")
-    }
-</script>
+<svelte:head>
+    <meta http-equiv="Refresh" content="0; url='/browse'" />
+</svelte:head>
