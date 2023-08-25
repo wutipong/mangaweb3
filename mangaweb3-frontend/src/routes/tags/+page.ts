@@ -1,5 +1,5 @@
 import type { PageLoad } from './$types';
-import {getBackendBaseURL} from '$lib/config'
+import { getBackendBaseURL } from '$lib/config'
 
 interface listRequest {
     favorite_only: boolean

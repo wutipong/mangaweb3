@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Toolbar from '$lib/tags/Toolbar.svelte';
+	import { Container, Icon } from 'sveltestrap';
+	import { page } from '$app/stores';
 	import Item from '$lib/tags/Item.svelte';
-	import type AboutDialog from '$lib/AboutDialog.svelte';
+	import Toolbar from '$lib/tags/Toolbar.svelte';
 	import type { PageData } from './$types';
-    import { page } from '$app/stores';
-    import { Icon } from 'sveltestrap';
+	import type AboutDialog from '$lib/AboutDialog.svelte';
 
 	export let data: PageData;
 
@@ -26,12 +26,12 @@
 		return output;
 	}
 
-    function CreateBrowseURL(name: string) {
-        const output = new URL('/browse', $page.url.origin);
+	function CreateBrowseURL(name: string) {
+		const output = new URL('/browse', $page.url.origin);
 		output.searchParams.append('tag', name);
 
 		return output;
-    }
+	}
 </script>
 
 <!-- Toolbar
@@ -43,7 +43,7 @@
     {onAboutClick}
 /-->
 
-<div class="container-fluid" style="padding-top:100px;">
+<Container fluid style="padding-top:100px;">
 	<div class="grid-container">
 		{#each data.tags as tag}
 			{#if !favoriteOnly || (favoriteOnly && tag.favorite)}
@@ -57,13 +57,13 @@
 			{/if}
 		{/each}
 	</div>
-</div>
+</Container>
 
 <!-- AboutDialog bind:this={aboutDialog} version={params.Version} /-->
 
 <nav aria-label="Move to top navigation" class="position-fixed bottom-0 end-0 p-3">
 	<a class="btn btn-secondary" href="#top">
-		<i class="bi bi-chevron-double-up" />
+		<Icon name="chevron-double-up" />
 		<span class="d-none d-sm-block">Top</span>
 	</a>
 </nav>
