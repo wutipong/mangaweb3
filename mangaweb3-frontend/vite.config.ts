@@ -6,5 +6,8 @@ export default defineConfig({
 	ssr: { noExternal: ['@popperjs/core'] },
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
-	}
+	},
+	envPrefix:[
+		'VITE_', 'MANGAWEB_'
+	]
 });

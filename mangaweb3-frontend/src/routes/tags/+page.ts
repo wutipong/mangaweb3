@@ -1,4 +1,5 @@
 import type { PageLoad } from './$types';
+import {getBackendBaseURL} from '$lib/config'
 
 interface listRequest {
     favorite_only: boolean
@@ -16,7 +17,7 @@ interface listResponse {
 
 export const load: PageLoad = async ({ fetch, params }) => {
 
-    const tagListURL = new URL("/tag/list", "http://localhost:8972");
+    const tagListURL = new URL("/tag/list", getBackendBaseURL());
     const response = await fetch(tagListURL, { method: 'POST' });
 
     const obj = await response.json() as listResponse;
