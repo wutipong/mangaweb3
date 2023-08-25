@@ -1,15 +1,27 @@
 import type { PageLoad } from './$types';
 
-export const load: PageLoad = async ({ params }) => {
+interface listRequest {
+    favorite_only: boolean
+}
+
+interface Tag {
+    favorite: boolean
+    id: number
+    name: string
+}
+
+interface listResponse {
+    tags: Tag[]
+}
+
+export const load: PageLoad = async ({ fetch, params }) => {
 
     const tagListURL = new URL("/tag/list", "http://localhost:8972");
-    const response = await fetch(tagListURL, { mode: 'no-cors', method: 'POST'});
+    const response = await fetch(tagListURL, { method: 'POST' });
 
-    const obj = await response.json();
-    console.log(obj)
+    const obj = await response.json() as listResponse;
+
     return {
-        post: {
-            //tags: resp.tags,
-        },
+        tags: obj?.tags as Tag[]
     };
 };

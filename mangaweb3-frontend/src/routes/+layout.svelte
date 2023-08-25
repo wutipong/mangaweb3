@@ -1,5 +1,5 @@
 <script lang="ts">
-    import 'bootstrap/dist/css/bootstrap.min.css';
+    import "$lib/custom.scss"
 </script>
 
 <slot />
