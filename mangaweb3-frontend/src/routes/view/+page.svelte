@@ -1,16 +1,48 @@
 <script lang="ts">
-	import Toolbar from './Toolbar.svelte';
-	import ImageViewer from './ImageViewer.svelte';
-	//import Toast from "$libs/Toast.svelte";
-	// import ModalDialog from "./Common/ModalDialog.svelte";
-	import PageScroll from './PageScroll.svelte';
-	import type { PageData } from './$types';
 	import { getBackendBaseURL } from '$lib/config';
-
-	export let data: PageData;
+	import AboutDialog from '$lib/AboutDialog.svelte';
+	import ImageViewer from './ImageViewer.svelte';
+	import PageScroll from './PageScroll.svelte';
+	import Toast from '$lib/Toast.svelte';
+	import Toolbar from './Toolbar.svelte';
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 
 	let current = 0;
 	let viewer: ImageViewer;
+
+	interface Request {
+		path: string;
+	}
+
+	interface Response {
+		browse_url: string;
+		favorite: boolean;
+		indices: number[];
+		tags: string[];
+	}
+
+	let request: Request = {
+		path: ''
+	};
+
+	let response: Response = {
+		browse_url: '',
+		favorite: false,
+		indices: [],
+		tags: []
+	};
+
+	onMount(async () => {
+		const params = $page.url.searchParams;
+		if (params.has('name')) {
+			request.path = params.get('name') as string;
+		}
+
+		const url = new URL('/view', getBackendBaseURL());
+		const resp = await fetch(url, { method: 'POST', body: JSON.stringify(request) });
+		response = await resp.json();
+	});
 
 	function createImageUrls(name: string, indices: number[]): string[] {
 		const url = new URL('/view/get_image', getBackendBaseURL());
@@ -24,69 +56,61 @@
 
 		return output;
 	}
-	/*
-    let favorite = params.Favorite;
-    let name = params.Name;
-    let tags = params.Tags;
-    let browseURL = params.BrowseURL;
 
+	let aboutDialog: AboutDialog;
+	let toast: Toast;
 
-    let toast;
-    let aboutDialog;
+	function downloadManga() {
+		// download(params.DownloadURL);
+	}
 
+	function downloadPage() {
+		// download(params.DownloadPageURLs[current]);
+	}
 
-    function downloadManga() {
-        download(params.DownloadURL);
-    }
+	async function toggleFavorite() {
+		const req = {
+			favorite: !response.favorite,
+			name: request.path
+		};
 
-    function downloadPage() {
-        download(params.DownloadPageURLs[current]);
-    }
+		const url = new URL('/view/set_favorite', window.location.origin);
 
-    async function toggleFavorite() {
-        favorite = !favorite;
+		const resp = await fetch(url, { method: 'POST', body: JSON.stringify(req) });
+		const json = await resp.json();
 
-        const urlSearchParams = new URLSearchParams();
-        urlSearchParams.set("favorite", favorite.toString());
+		if (json.favorite) {
+			toast.show('Favorite', 'The current manga is now your favorite.');
+		} else {
+			toast.show('Favorite', 'The current manga is no longer your favorite.');
+		}
 
-        const url = new URL(params.SetFavoriteURL, window.location.origin);
-        url.search = urlSearchParams.toString();
+		response.favorite = json.favorite;
+	}
 
-        await fetch(url);
-        if (favorite) {
-            toast.show("Favorite", "The current manga is now your favorite.");
-        } else {
-            toast.show(
-                "Favorite",
-                "The current manga is no longer your favorite."
-            );
-        }
-    }
+	async function updateCover() {
+		/*
+		const url = new URL(params.UpdateCoverURLs[current], window.location.origin);
 
-    async function updateCover() {
-        const url = new URL(
-            params.UpdateCoverURLs[current],
-            window.location.origin
-        );
+		await fetch(url);
+		toast.show('Update Cover', 'The cover image is updated successfully.');
+        */
+	}
 
-        await fetch(url);
-        toast.show("Update Cover", "The cover image is updated successfully.");
-    }
+	function download(url: string) {
+		let link = document.createElement('a');
+		link.setAttribute('download', '');
+		link.href = url;
+		document.body.appendChild(link);
 
-	function download(url) {
-        let link = document.createElement("a");
-        link.setAttribute("download", "");
-        link.href = url;
-        document.body.appendChild(link);
-
-        link.click();
-        link.remove();
-    }
+		link.click();
+		link.remove();
+	}
 
 	function onAboutClick() {
-        aboutDialog.show();
-    }
-*/
+		aboutDialog.show();
+	}
+
 	function onIndexChange(i: number) {
 		current = i;
 	}
@@ -96,30 +120,28 @@
 	}
 </script>
 
-<PageScroll PageCount={data.indices.length} {onValueChange} Current={current}></PageScroll>
+<PageScroll PageCount={response.indices.length} {onValueChange} Current={current} />
 
 <div class="fullscreen" style="padding-top:80px;">
-	<ImageViewer imageURLs={createImageUrls(data.name, data.indices)} {onIndexChange} bind:this={viewer} />
+	<ImageViewer
+		imageURLs={createImageUrls(request.path, response.indices)}
+		{onIndexChange}
+		bind:this={viewer}
+	/>
 </div>
 
-<!-- Toolbar
-    Tags={tags}
-    Name={name}
-    Favorite={favorite}
-    BrowseURL={browseURL}
-    onDownloadManga={downloadManga}
-    onDownloadPage={downloadPage}
-    {toggleFavorite}
-    {updateCover}
-    {onAboutClick}
-/ -->
+<Toolbar
+	Tags={response.tags}
+	Name={request.path}
+	Favorite={response.favorite}
+	BrowseURL={new URL('/browse', $page.url.origin).toString()}
+	onDownloadManga={downloadManga}
+	onDownloadPage={downloadPage}
+	{toggleFavorite}
+	{updateCover}
+	{onAboutClick}
+/>
 
-<!-- Toast bind:this={toast} /-->
+<Toast bind:this={toast} />
 
-<!-- ModalDialog Id="aboutModal" Title="About" bind:this={aboutDialog}>
-    <h5>MangaWeb</h5>
-    <h6>Version {params.Version}</h6>
-    <p>&copy; 2021-2023 Wutipong Wongsakuldej. All Right Reserved</p>
-    <p>Licensed under MIT License</p>
-    <p><a href="https://github.com/wutipong/mangaweb">Homepage</a></p>
-</ModalDialog -->
+<AboutDialog bind:this={aboutDialog} />

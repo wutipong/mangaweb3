@@ -131,9 +131,6 @@
 	}
 
 	async function onTagFavorite() {
-		const urlSearchParams = new URLSearchParams();
-		urlSearchParams.set('favorite', response.tag_favorite.toString());
-
 		const req = {
 			favorite: !response.tag_favorite,
 			tag: request.tag
