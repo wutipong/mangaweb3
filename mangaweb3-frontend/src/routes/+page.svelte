@@ -1,2 +1,7 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script lang="ts">
+    import {redirect} from "@sveltejs/kit"
+
+    export function load() {
+        throw redirect(308, "/browse")
+    }
+</script>

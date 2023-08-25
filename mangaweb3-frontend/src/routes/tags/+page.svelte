@@ -1,3 +1,63 @@
-<h1>About this site</h1>
-<p>TODO...</p>
-<a href="/">Home</a>
+<script lang="ts">
+    import Toolbar from "$lib/tags/Toolbar.svelte";
+    import Item from "$lib/tags/Item.svelte";
+    import type AboutDialog from "$lib/AboutDialog.svelte"
+
+    export let params = {};
+    export let data: PageData;
+
+   
+
+    let favoriteOnly = false;
+    let aboutDialog :AboutDialog;
+
+    function toggleFavoriteOnly() {
+        favoriteOnly = !favoriteOnly;
+    }
+
+    function onAboutClick() {
+        aboutDialog.show();
+    }
+
+    export async function load() {
+        params.tagList = await fetch(tagListURL)
+        console.log(params)
+    }
+</script>
+
+<!-- Toolbar
+    title={params.Title}
+    browseURL={params.BrowseURL}
+    tagListURL={params.TagListURL}
+    onFilterFavorite={toggleFavoriteOnly}
+    {favoriteOnly}
+    {onAboutClick}
+/>
+
+<div class="container-fluid" style="padding-top:100px;">
+    <div class="grid-container">
+        {#each params.Tags as tag}
+            {#if !favoriteOnly || (favoriteOnly && tag.Favorite)}
+                <Item
+                    name={tag.Name}
+                    favorite={tag.Favorite}
+                    id={tag.ID}
+                    url={tag.URL}
+                    thumbnailURL={tag.ThumbnailURL}
+                />
+            {/if}
+        {/each}
+    </div>
+</div>
+
+<AboutDialog bind:this={aboutDialog} version={params.Version} /-->
+
+<nav
+    aria-label="Move to top navigation"
+    class="position-fixed bottom-0 end-0 p-3"
+>
+    <a class="btn btn-secondary" href="#top">
+        <i class="bi bi-chevron-double-up" />
+        <span class="d-none d-sm-block">Top</span>
+    </a>
+</nav>
