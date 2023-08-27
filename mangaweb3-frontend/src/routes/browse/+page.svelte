@@ -1,15 +1,14 @@
 <script lang="ts">
-	import Toolbar from './Toolbar.svelte';
-	import Item from './Item.svelte';
-	// import Pagination from "./Common/Pagination.svelte";
-	import Toast from '$lib/Toast.svelte';
-	import MoveToTop from '$lib/MoveToTop.svelte';
-	import AboutDialog from '$lib/AboutDialog.svelte';
-	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
 	import { getBackendBaseURL } from '$lib/config';
+	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
+	import { Spinner, Icon } from 'sveltestrap';
+	import AboutDialog from '$lib/AboutDialog.svelte';
+	import Item from './Item.svelte';
+	import MoveToTop from '$lib/MoveToTop.svelte';
 	import Pagination from './Pagination.svelte';
-	import { writable } from 'svelte/store';
+	import Toast from '$lib/Toast.svelte';
+	import Toolbar from './Toolbar.svelte';
 
 	interface Request {
 		favorite_only: boolean;
@@ -187,7 +186,9 @@
 	}
 </script>
 
-{#await promise then}
+{#await promise}
+	<div><Spinner type="grow" /> Loading ...</div>
+{:then}
 	<Toolbar
 		Title={request.tag == '' ? 'Browse' : `Browse ${request.tag}`}
 		BrowseURL={new URL('/browse', $page.url.origin).toString()}
@@ -224,7 +225,10 @@
 	<div aria-label="Page navigation" class="position-fixed bottom-0 start-50 p-3 translate-middle-x">
 		<Pagination currentPage={request.page} totalPage={response.total_page} {onPageClick} />
 	</div>
+{:catch}
+	<Icon name="exclamation-octagon-fill" color="danger" /> Cannot fetch browse data.
 {/await}
+
 <Toast bind:this={toast} />
 
 <MoveToTop />
