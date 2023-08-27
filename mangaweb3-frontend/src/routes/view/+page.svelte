@@ -74,7 +74,7 @@
 			name: request.path
 		};
 
-		const url = new URL('/view/set_favorite', window.location.origin);
+		const url = new URL('/view/set_favorite', getBackendBaseURL());
 
 		const resp = await fetch(url, { method: 'POST', body: JSON.stringify(req) });
 		const json = await resp.json();

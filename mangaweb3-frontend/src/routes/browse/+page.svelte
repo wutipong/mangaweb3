@@ -149,7 +149,7 @@
 			tag: request.tag
 		};
 
-		const url = new URL('/tag/set_favorite', $page.url.origin);
+		const url = new URL('/tag/set_favorite', getBackendBaseURL());
 
 		const resp = await fetch(url, { method: 'POST', body: JSON.stringify(req) });
 		const json = await resp.json();
