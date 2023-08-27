@@ -138,10 +138,10 @@
 </div>
 
 <Toolbar
-	Tags={response.tags}
-	Name={request.path}
-	Favorite={response.favorite}
-	BrowseURL={new URL('/browse', $page.url.origin).toString()}
+	tags={response.tags}
+	name={request.path}
+	favorite={response.favorite}
+	browseURL={new URL('/browse', $page.url.origin).toString()}
 	onDownloadManga={downloadManga}
 	onDownloadPage={downloadPage}
 	{toggleFavorite}
