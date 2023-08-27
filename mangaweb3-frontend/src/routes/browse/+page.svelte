@@ -2,13 +2,13 @@
 	import Toolbar from './Toolbar.svelte';
 	import Item from './Item.svelte';
 	// import Pagination from "./Common/Pagination.svelte";
-	// import PageItem from "./Common/PageItem.svelte";
 	import Toast from '$lib/Toast.svelte';
 	import MoveToTop from '$lib/MoveToTop.svelte';
 	import AboutDialog from '$lib/AboutDialog.svelte';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { getBackendBaseURL } from '$lib/config';
+	import Pagination from './Pagination.svelte';
 
 	interface Request {
 		favorite_only: boolean;
@@ -196,6 +196,8 @@
 	</div>
 </div>
 <div style="height: 100px;" />
+
+<Pagination currentPage={request.page} pageCount={response.total_page};></Pagination>
 
 <!-- Pagination>
     {#each params.Pages as page}
