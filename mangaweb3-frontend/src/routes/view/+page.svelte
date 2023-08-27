@@ -89,12 +89,19 @@
 	}
 
 	async function updateCover() {
-		/*
-		const url = new URL(params.UpdateCoverURLs[current], window.location.origin);
+		const url = new URL('/view/update_cover', getBackendBaseURL());
+		const req = {
+			index: current,
+			name: request.path
+		};
 
-		await fetch(url);
-		toast.show('Update Cover', 'The cover image is updated successfully.');
-        */
+		const resp = await fetch(url, { method: 'POST', body: JSON.stringify(req) });
+		const json = await resp.json();
+		if (json.success) {
+			toast.show('Update Cover', 'The cover image is updated successfully.');
+		} else {
+			toast.show('Update Cover', 'The cover is not updated.');
+		}
 	}
 
 	function download(url: string) {
