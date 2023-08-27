@@ -1,62 +1,70 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte/types/runtime/internal/lifecycle';
+	import { onMount } from 'svelte';
 	import { Pagination, PaginationItem, PaginationLink } from 'sveltestrap';
 
 	export let currentPage = 0;
-	export let pageCount = 1;
+	export let totalPage = 1;
 	export let pageToShow = 5;
+	export let onPageClick = (i: number): void => {};
 
-	let firstUrl = '';
-	let lastUrl = '';
-
-	interface NumberURL {
-		page: string;
-		url: string;
+	interface Page {
+		url: URL;
+		index: number;
 	}
-	let numberUrls: NumberURL[] = [];
+
+	let numberUrls: Page[] = [];
+	let firstUrl: URL;
+	let lastUrl: URL;
 
 	onMount(() => {
-		let url = $page.url;
-		let first = new URL(url);
-		first.searchParams.delete('page');
-		first.searchParams.append('page', '0');
-		firstUrl = first.toString();
+		if (totalPage == 0) {
+			return;
+		}
 
-		let last = new URL(url);
-		last.searchParams.delete('page');
-		last.searchParams.append('page', `${pageCount - 1}`);
-		lastUrl = last.toString();
+		firstUrl = new URL($page.url);
+		firstUrl.searchParams.set('page', '0');
 
-		let halfCount = pageToShow / 2;
+		lastUrl = new URL($page.url);
+		lastUrl.searchParams.set('page', (totalPage - 1).toString());
+
+		let halfCount = Math.floor(pageToShow / 2);
 
 		for (let i = currentPage - halfCount; i < currentPage + halfCount; i++) {
 			if (i < 0) continue;
-			if (i >= pageCount) continue;
+			if (i >= totalPage) continue;
 
-			let u = new URL(url);
-			u.searchParams.delete('page');
-			u.searchParams.append('page', `${i}`);
-			numberUrls.push({
-				page: `${i}`,
-				url: u.toString()
-			});
+			const url = new URL($page.url);
+			url.searchParams.set('page', `${i}`);
+
+			numberUrls = [
+				...numberUrls,
+				{
+					url: url,
+					index: i,
+				}
+			];
 		}
 	});
 </script>
 
 <Pagination>
 	<PaginationItem>
-		<PaginationLink first href={firstUrl} />
+		<PaginationLink first on:click={() => onPageClick(0)} href={firstUrl?.toString()} />
 	</PaginationItem>
 
 	{#each numberUrls as u}
 		<PaginationItem>
-			<PaginationLink href={u.url}>{u.page}</PaginationLink>
+			<PaginationLink
+				on:click={() => {
+					onPageClick(u.index);
+				}}
+				href={u.url.toString()}>{u.index}</PaginationLink
+			>
 		</PaginationItem>
 	{/each}
 
 	<PaginationItem>
-		<PaginationLink last href={lastUrl} />
+		<PaginationLink last on:click={() => onPageClick(totalPage - 1)} href={lastUrl?.toString()} />
 	</PaginationItem>
 </Pagination>

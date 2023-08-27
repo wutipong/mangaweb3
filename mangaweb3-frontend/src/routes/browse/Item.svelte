@@ -2,7 +2,6 @@
 	import { getBackendBaseURL } from '$lib/config';
 	import { onMount } from 'svelte';
     import { page } from '$app/stores';
-    import { Card, CardBody } from 'sveltestrap';
 
 	export let favorite = false;
 	export let isRead = false;

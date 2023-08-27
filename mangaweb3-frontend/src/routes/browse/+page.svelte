@@ -9,6 +9,7 @@
 	import { onMount } from 'svelte';
 	import { getBackendBaseURL } from '$lib/config';
 	import Pagination from './Pagination.svelte';
+	import { writable } from 'svelte/store';
 
 	interface Request {
 		favorite_only: boolean;
@@ -62,7 +63,12 @@
 		total_page: 0
 	};
 
-	onMount(async () => {
+	let promise: Promise<void>;
+	onMount(() => {
+		promise = loadData();
+	});
+
+	async function loadData() {
 		const params = $page.url.searchParams;
 		if (params.has('favorite_only')) {
 			request.favorite_only = params.get('favorite_only') == 'true';
@@ -81,13 +87,20 @@
 			request.tag = params.get('tag') as string;
 		}
 
+		if (params.has('page')) {
+			let v = params.get('page');
+			if (v != null) {
+				request.page = parseInt(v);
+			}
+		}
+
 		let u = new URL('/browse', getBackendBaseURL());
 		const r = await fetch(u, { method: 'POST', body: JSON.stringify(request) });
 		response = await r.json();
-	});
+	}
 
 	function changeSort(sortBy: string) {
-		let url = window.location;
+		let url = $page.url;
 		let searchParams = new URLSearchParams(url.search);
 		searchParams.set('sort', sortBy);
 
@@ -103,7 +116,7 @@
 	}
 
 	function changeOrder(order: string) {
-		let url = window.location;
+		let url = $page.url;
 		let searchParams = new URLSearchParams(url.search);
 
 		searchParams.set('order', order);
@@ -112,7 +125,7 @@
 	}
 
 	function onFilterFavorite() {
-		let url = window.location;
+		let url = $page.url;
 		let searchParams = new URLSearchParams(url.search);
 
 		let isFavorite = request.favorite_only;
@@ -136,7 +149,7 @@
 			tag: request.tag
 		};
 
-		const url = new URL('/tag/set_favorite', window.location.origin);
+		const url = new URL('/tag/set_favorite', $page.url.origin);
 
 		const resp = await fetch(url, { method: 'POST', body: JSON.stringify(req) });
 		const json = await resp.json();
@@ -152,7 +165,7 @@
 
 	function onSearchClick(t: string) {
 		let searchText = t;
-		let url = window.location;
+		let url = $page.url;
 		let searchParams = new URLSearchParams(url.search);
 		searchParams.set('search', searchText);
 
@@ -162,55 +175,56 @@
 	function onAboutClick() {
 		aboutDialog.show();
 	}
+
+	function onPageClick(i: number): void {
+		const params = $page.url.searchParams;
+		if ($page.url.searchParams.has('page')) {
+			$page.url.searchParams.delete('page');
+		}
+
+		$page.url.searchParams.set('page', i.toString());
+		promise = loadData();
+	}
 </script>
 
-<Toolbar
-	Title={request.tag == '' ? 'Browse' : `Browse ${request.tag}`}
-	BrowseURL={new URL('/browse', $page.url.origin).toString()}
-	TagListURL={new URL('/tags', $page.url.origin).toString()}
-	SortBy={request.sort}
-	SortOrder={request.order}
-	FavoriteOnly={request.favorite_only}
-	Tag={request.tag}
-	TagFavorite={response.tag_favorite}
-	{changeSort}
-	{changeOrder}
-	{onFilterFavorite}
-	{rescanLibrary}
-	{onTagFavorite}
-	{onSearchClick}
-	SearchText={request.search}
-	{onAboutClick}
-/>
+{#await promise then}
+	<Toolbar
+		Title={request.tag == '' ? 'Browse' : `Browse ${request.tag}`}
+		BrowseURL={new URL('/browse', $page.url.origin).toString()}
+		TagListURL={new URL('/tags', $page.url.origin).toString()}
+		SortBy={request.sort}
+		SortOrder={request.order}
+		FavoriteOnly={request.favorite_only}
+		Tag={request.tag}
+		TagFavorite={response.tag_favorite}
+		{changeSort}
+		{changeOrder}
+		{onFilterFavorite}
+		{rescanLibrary}
+		{onTagFavorite}
+		{onSearchClick}
+		SearchText={request.search}
+		{onAboutClick}
+	/>
 
-<div class="container-fluid" style="padding-top:100px;">
-	<div class="grid-container">
-		{#each response.items as item}
-			<Item
-				favorite={item.favorite}
-				isRead={item.is_read}
-				id={item.id.toString()}
-				name={item.name}
-			/>
-		{/each}
+	<div class="container-fluid" style="padding-top:100px;">
+		<div class="grid-container">
+			{#each response.items as item}
+				<Item
+					favorite={item.favorite}
+					isRead={item.is_read}
+					id={item.id.toString()}
+					name={item.name}
+				/>
+			{/each}
+		</div>
 	</div>
-</div>
-<div style="height: 100px;" />
+	<div style="height: 100px;" />
 
-<Pagination currentPage={request.page} pageCount={response.total_page};></Pagination>
-
-<!-- Pagination>
-    {#each params.Pages as page}
-        <PageItem
-            IsActive={page.IsActive}
-            IsEnabled={page.IsEnabled}
-            IsHiddenOnSmall={page.IsHiddenOnSmall}
-            URL={page.LinkURL}
-            Content={page.Content}
-        />
-    {/each}
-</Pagination -->
-
+	<div aria-label="Page navigation" class="position-fixed bottom-0 start-50 p-3 translate-middle-x">
+		<Pagination currentPage={request.page} totalPage={response.total_page} {onPageClick} />
+	</div>
+{/await}
 <Toast bind:this={toast} />
 
 <MoveToTop />
