@@ -30,9 +30,11 @@
 
 		let halfCount = Math.floor(pageToShow / 2);
 
-		for (let i = currentPage - halfCount; i < currentPage + halfCount; i++) {
-			if (i < 0) continue;
-			if (i >= totalPage) continue;
+		const startPage = currentPage - halfCount;
+		const endPage = startPage + pageToShow;
+
+		for (let i = startPage; i < endPage; i++) {
+			if (i < 0 || i >= totalPage) continue;
 
 			const url = new URL($page.url);
 			url.searchParams.set('page', `${i}`);
@@ -41,7 +43,7 @@
 				...numberUrls,
 				{
 					url: url,
-					index: i,
+					index: i
 				}
 			];
 		}
@@ -54,7 +56,7 @@
 	</PaginationItem>
 
 	{#each numberUrls as u}
-		<PaginationItem>
+		<PaginationItem active={u.index == currentPage}>
 			<PaginationLink
 				on:click={() => {
 					onPageClick(u.index);
