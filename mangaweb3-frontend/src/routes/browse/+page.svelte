@@ -160,6 +160,15 @@
 		);
 	}
 
+	async function recreateThumbnails() {
+		const url = new URL('/browse/recreate_thumbnails', getBackendBaseURL());
+		await fetch(url);
+		toast.show(
+			'Re-create thumbnail',
+			'Thumbnails recreating in progress. Please refresh after a few minutes.'
+		);
+	}
+
 	async function onTagFavorite() {
 		const req = {
 			favorite: !response.tag_favorite,
@@ -286,6 +295,9 @@
 					<DropdownMenu>
 						<DropdownItem on:click={() => rescanLibrary()}>
 							<Icon name="arrow-clockwise" class="me-3" /> Rescan library
+						</DropdownItem>
+						<DropdownItem on:click={() => recreateThumbnails()}>
+							<Icon name="file-image" class="me-3" /> Recreate thumbnails
 						</DropdownItem>
 					</DropdownMenu>
 				</Dropdown>
