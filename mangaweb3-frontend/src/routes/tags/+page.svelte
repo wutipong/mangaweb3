@@ -4,7 +4,7 @@
 	import type { PageData } from './$types';
 	import AboutDialog from '$lib/AboutDialog.svelte';
 	import MoveToTop from '$lib/MoveToTop.svelte';
-	import { getBackendBaseURL } from '$lib/config';
+	import { variables } from '$lib/variables';
 	import {
 		Container,
 		Icon,
@@ -34,7 +34,7 @@
 	}
 
 	function createThumbnailUrl(name: string) {
-		const output = new URL('/tag/thumbnail', getBackendBaseURL());
+		const output = new URL('/tag/thumbnail', variables.basePath);
 		output.searchParams.append('tag', name);
 
 		return output;
@@ -52,7 +52,7 @@
 	}
 
 	async function recreateThumbnails() {
-		const url = new URL('/tag/recreate_thumbnails', getBackendBaseURL());
+		const url = new URL('/tag/recreate_thumbnails', variables.basePath);
 		await fetch(url);
 		toast.show(
 			'Re-create thumbnail',

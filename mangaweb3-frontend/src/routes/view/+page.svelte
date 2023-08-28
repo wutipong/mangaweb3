@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getBackendBaseURL } from '$lib/config';
+	import { variables } from '$lib/variables';
 	import AboutDialog from '$lib/AboutDialog.svelte';
 	import FavoriteButton from '$lib/FavoriteButton.svelte';
 	import ImageViewer from './ImageViewer.svelte';
@@ -56,13 +56,13 @@
 			request.name = params.get('name') as string;
 		}
 
-		const url = new URL('/view', getBackendBaseURL());
+		const url = new URL('/view', variables.basePath);
 		const resp = await fetch(url, { method: 'POST', body: JSON.stringify(request) });
 		response = await resp.json();
 	});
 
 	function createImageUrls(name: string, indices: number[]): string[] {
-		const url = new URL('/view/get_image', getBackendBaseURL());
+		const url = new URL('/view/get_image', variables.basePath);
 		const output = [];
 
 		url.searchParams.append('name', name);
@@ -78,14 +78,14 @@
 	let toast: Toast;
 
 	function downloadManga() {
-		const url = new URL('/view/download', getBackendBaseURL());
+		const url = new URL('/view/download', variables.basePath);
 		url.searchParams.set('name', request.name);
 
 		download(url.toString());
 	}
 
 	function downloadPage() {
-		const url = new URL('/view/get_image', getBackendBaseURL());
+		const url = new URL('/view/get_image', variables.basePath);
 		url.searchParams.set('name', request.name);
 		url.searchParams.set('i', current.toString());
 
@@ -98,7 +98,7 @@
 			name: request.name
 		};
 
-		const url = new URL('/view/set_favorite', getBackendBaseURL());
+		const url = new URL('/view/set_favorite', variables.basePath);
 
 		const resp = await fetch(url, { method: 'POST', body: JSON.stringify(req) });
 		const json = await resp.json();
@@ -113,7 +113,7 @@
 	}
 
 	async function updateCover() {
-		const url = new URL('/view/update_cover', getBackendBaseURL());
+		const url = new URL('/view/update_cover', variables.basePath);
 		const req = {
 			index: current,
 			name: request.name

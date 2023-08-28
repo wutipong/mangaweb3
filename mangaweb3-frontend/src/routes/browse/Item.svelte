@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getBackendBaseURL } from '$lib/config';
+	import { variables } from '$lib/variables';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { Badge, Card, CardBody, CardFooter, CardImg, Icon } from 'sveltestrap';
@@ -15,7 +15,7 @@
 	let viewURL = '';
 
 	onMount(async () => {
-		let u = new URL('/browse/thumbnail', getBackendBaseURL());
+		let u = new URL('/browse/thumbnail', variables.basePath);
 		u.searchParams.append('name', name);
 		thumbnailURL = u.toString();
 

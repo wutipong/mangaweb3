@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getBackendBaseURL } from '$lib/config';
+	import { variables } from '$lib/variables';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import {
@@ -120,7 +120,7 @@
 	}
 
 	async function loadData() {
-		let u = new URL('/browse', getBackendBaseURL());
+		let u = new URL('/browse', variables.basePath);
 		const r = await fetch(u, { method: 'POST', body: JSON.stringify(request) });
 		response = await r.json();
 	}
@@ -152,7 +152,7 @@
 	}
 
 	async function rescanLibrary() {
-		const url = new URL('/browse/rescan_library', getBackendBaseURL());
+		const url = new URL('/browse/rescan_library', variables.basePath);
 		await fetch(url);
 		toast.show(
 			'Re-scan Library',
@@ -161,7 +161,7 @@
 	}
 
 	async function recreateThumbnails() {
-		const url = new URL('/browse/recreate_thumbnails', getBackendBaseURL());
+		const url = new URL('/browse/recreate_thumbnails', variables.basePath);
 		await fetch(url);
 		toast.show(
 			'Re-create thumbnail',
@@ -175,7 +175,7 @@
 			tag: request.tag
 		};
 
-		const url = new URL('/tag/set_favorite', getBackendBaseURL());
+		const url = new URL('/tag/set_favorite', variables.basePath);
 
 		const resp = await fetch(url, { method: 'POST', body: JSON.stringify(req) });
 		const json = await resp.json();
