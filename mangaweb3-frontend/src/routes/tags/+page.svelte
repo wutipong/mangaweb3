@@ -57,17 +57,7 @@
 	function handleUpdate(event: CustomEvent<boolean>) {
 		navbarToggleOpen = event.detail;
 	}
-
 </script>
-
-<!-- Toolbar
-	title="Tag List"
-	browseURL={new URL('/browse', $page.url.origin).toString()}
-	tagListURL={$page.url.toString()}
-	onFilterFavorite={toggleFavoriteOnly}
-	{favoriteOnly}
-	{onAboutClick}
-/-->
 
 <Navbar color="dark" dark expand="md" sticky={'top'}>
 	<NavbarBrand href="/">{`Tag list`}</NavbarBrand>
@@ -87,7 +77,7 @@
 					<DropdownItem><Icon name="star" class="me-3" /> Favorite</DropdownItem>
 				</DropdownMenu>
 			</Dropdown>
-			
+
 			<NavItem>
 				<NavLink on:click={() => aboutDialog.show()}>About</NavLink>
 			</NavItem>
@@ -95,23 +85,26 @@
 	</Collapse>
 </Navbar>
 
-
 <Container fluid style="padding-top:30px;">
 	<div class="grid-container">
-		{#each data.tags as tag}
-			{#if !favoriteOnly || (favoriteOnly && tag.favorite)}
-				<Item
-					name={tag.name}
-					favorite={tag.favorite}
-					id={tag.id.toString()}
-					url={createBrowseURL(tag.name).toString()}
-					thumbnailURL={createThumbnailUrl(tag.name).toString()}
-				/>
-			{/if}
-		{/each}
+		<div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-3">
+			{#each data.tags as tag}
+				{#if !favoriteOnly || (favoriteOnly && tag.favorite)}
+					<div class="col">
+						<Item
+							name={tag.name}
+							favorite={tag.favorite}
+							id={tag.id.toString()}
+							url={createBrowseURL(tag.name).toString()}
+							thumbnailURL={createThumbnailUrl(tag.name).toString()}
+						/>
+					</div>
+				{/if}
+			{/each}
+		</div>
 	</div>
 </Container>
 
 <AboutDialog bind:this={aboutDialog} version={'development'} />
 
-<MoveToTop/>
+<MoveToTop />

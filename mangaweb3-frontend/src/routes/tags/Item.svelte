@@ -1,38 +1,38 @@
 <script lang="ts">
+    import { onMount } from 'svelte';
+	import { Badge, Card, CardBody, CardFooter, CardImg, Icon } from 'sveltestrap';
+
     export let name = "";
     export let favorite = false;
     export let id = "";
     export let url = "";
     export let thumbnailURL = "";
+
+    let classStr = '';
+
+    onMount(async () => {
+		
+		if (favorite) {
+			classStr = 'border border-pink';
+		}
+	});
+
 </script>
 
-<div
-    class="card mb-3"
-    class:border={favorite}
-    class:border-pink={favorite}
-    {id}
->
-    {#if favorite}
-        <span class="position-absolute bottom-0 end-0 p-2 badge bg-pink">
-            <span><i class="bi bi-star-fill" /> Favorite</span>
-        </span>
-    {/if}
-
-    <div class="row g-0">
-        <div class="col-md-4">
-            <a href={url} class="thumb-link">
-                <img
-                    class="img-fluid lazy rounded thumb-img"
-                    loading="lazy"
-                    src={thumbnailURL}
-                    alt={name}
-                />
-            </a>
-        </div>
-        <div class="col-md-8">
-            <div class="card-body">
-                <h5 class="card-title"><a href={url}>{name}</a></h5>
-            </div>
-        </div>
-    </div>
-</div>
+<Card class="{classStr} h-100" {id}>
+	<CardImg top src={thumbnailURL} />
+	<CardBody>
+		<a href={url}>{name}</a>
+	</CardBody>
+	<CardFooter>
+		{#if favorite}
+			<Badge class="bg-pink">
+				<span><Icon name="star-fill" /> Favorite </span>
+			</Badge>
+        {:else}
+        <Badge>
+            <span><Icon name="tag" />  </span>
+        </Badge>
+		{/if}
+	</CardFooter>
+</Card>
