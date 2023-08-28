@@ -26,11 +26,13 @@
 		Input,
 		Button
 	} from 'sveltestrap';
+	import Toast from '$lib/Toast.svelte';
 
 	export let data: PageData;
 
 	let favoriteOnly = false;
 	let aboutDialog: AboutDialog;
+	let toast: Toast;
 
 	function toggleFavoriteOnly() {
 		favoriteOnly = !favoriteOnly;
@@ -57,6 +59,15 @@
 	function handleUpdate(event: CustomEvent<boolean>) {
 		navbarToggleOpen = event.detail;
 	}
+
+	async function recreateThumbnails() {
+		const url = new URL('/tag/recreate_thumbnails', getBackendBaseURL());
+		await fetch(url);
+		toast.show(
+			'Re-create thumbnail',
+			'Thumbnails recreating in progress. Please refresh after a few minutes.'
+		);
+	}
 </script>
 
 <Navbar color="dark" dark expand="md" sticky={'top'}>
@@ -77,7 +88,14 @@
 					<DropdownItem><Icon name="star" class="me-3" /> Favorite</DropdownItem>
 				</DropdownMenu>
 			</Dropdown>
-
+			<Dropdown nav inNavbar>
+				<DropdownToggle nav caret>Tools</DropdownToggle>
+				<DropdownMenu>
+					<DropdownItem on:click={() => recreateThumbnails()}>
+						<Icon name="file-image" class="me-3" /> Recreate thumbnails
+					</DropdownItem>
+				</DropdownMenu>
+			</Dropdown>
 			<NavItem>
 				<NavLink on:click={() => aboutDialog.show()}>About</NavLink>
 			</NavItem>
@@ -108,3 +126,5 @@
 <AboutDialog bind:this={aboutDialog} version={'development'} />
 
 <MoveToTop />
+
+<Toast bind:this={toast} />
