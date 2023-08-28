@@ -313,14 +313,18 @@
 
 	<div class="container-fluid" style="padding-top:30px;">
 		<div class="grid-container">
-			{#each response.items as item}
-				<Item
-					favorite={item.favorite}
-					isRead={item.is_read}
-					id={item.id.toString()}
-					name={item.name}
-				/>
-			{/each}
+			<div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-3">
+				{#each response.items as item}
+					<div class="col">
+					<Item
+						favorite={item.favorite}
+						isRead={item.is_read}
+						id={item.id.toString()}
+						name={item.name}
+					/>
+				</div>
+				{/each}
+			</div>
 		</div>
 	</div>
 	<div style="height: 100px;" />
