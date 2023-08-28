@@ -1,14 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Item from './Item.svelte';
-	import Toolbar from './Toolbar.svelte';
 	import type { PageData } from './$types';
 	import AboutDialog from '$lib/AboutDialog.svelte';
 	import MoveToTop from '$lib/MoveToTop.svelte';
 	import { getBackendBaseURL } from '$lib/config';
 	import {
 		Container,
-		Spinner,
 		Icon,
 		Collapse,
 		Navbar,
@@ -21,12 +19,9 @@
 		DropdownToggle,
 		DropdownMenu,
 		DropdownItem,
-		InputGroup,
-		InputGroupText,
-		Input,
-		Button
 	} from 'sveltestrap';
 	import Toast from '$lib/Toast.svelte';
+	import { goto } from '$app/navigation';
 
 	export let data: PageData;
 
@@ -36,10 +31,6 @@
 
 	function toggleFavoriteOnly() {
 		favoriteOnly = !favoriteOnly;
-	}
-
-	function onAboutClick() {
-		aboutDialog.show();
 	}
 
 	function createThumbnailUrl(name: string) {
@@ -78,14 +69,22 @@
 			<Dropdown nav inNavbar>
 				<DropdownToggle nav caret>Browse</DropdownToggle>
 				<DropdownMenu end>
-					<DropdownItem><Icon name="list-ul" class="me-3" /> All items</DropdownItem>
-					<DropdownItem><Icon name="tags-fill" class="me-3" /> Tag list</DropdownItem>
+					<DropdownItem
+						on:click={() => {
+							goto(createBrowseURL(''));
+						}}><Icon name="list-ul" class="me-3" /> All items</DropdownItem
+					>
+					<DropdownItem on:click={() => goto($page.url)}
+						><Icon name="tags-fill" class="me-3" /> Tag list</DropdownItem
+					>
 				</DropdownMenu>
 			</Dropdown>
 			<Dropdown nav inNavbar>
 				<DropdownToggle nav caret>Filter</DropdownToggle>
-				<DropdownMenu end>
-					<DropdownItem><Icon name="star" class="me-3" /> Favorite</DropdownItem>
+				<DropdownMenu>
+					<DropdownItem on:click={() => (favoriteOnly = !favoriteOnly)} active={favoriteOnly}
+						><Icon name="star" class="me-3" /> Favorite</DropdownItem
+					>
 				</DropdownMenu>
 			</Dropdown>
 			<Dropdown nav inNavbar>

@@ -26,7 +26,6 @@
 	import MoveToTop from '$lib/MoveToTop.svelte';
 	import Pagination from './Pagination.svelte';
 	import Toast from '$lib/Toast.svelte';
-	import Toolbar from './Toolbar.svelte';
 	import { goto } from '$app/navigation';
 	import FavoriteButton from '$lib/FavoriteButton.svelte';
 
