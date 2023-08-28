@@ -349,7 +349,7 @@
 		<Pagination currentPage={request.page} totalPage={response.total_page} {onPageClick} />
 	</div>
 {:catch}
-	<Icon name="exclamation-octagon-fill" color="danger" /> Cannot fetch browse data.
+	<Icon name="exclamation-octagon-fill" color="danger" /> Cannot fetch browse data from {variables.basePath}.
 {/await}
 
 <Toast bind:this={toast} />
