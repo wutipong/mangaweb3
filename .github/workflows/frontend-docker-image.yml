@@ -61,10 +61,9 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: "{{defaultContext}}:mangaweb3-frontend"
           push: ${{ !env.ACT }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          file: ./mangaweb3-frontend/Dockerfile
           build-args: |
             VERSION=${{ steps.condval.outputs.value }}
