@@ -78,11 +78,18 @@
 	let toast: Toast;
 
 	function downloadManga() {
-		// download(params.DownloadURL);
+		const url = new URL('/view/download', getBackendBaseURL());
+		url.searchParams.set('name', request.name);
+
+		download(url.toString());
 	}
 
 	function downloadPage() {
-		// download(params.DownloadPageURLs[current]);
+		const url = new URL('/view/get_image', getBackendBaseURL());
+		url.searchParams.set('name', request.name);
+		url.searchParams.set('i', current.toString());
+
+		download(url.toString());
 	}
 
 	async function toggleFavorite() {
@@ -188,16 +195,16 @@
 			<Dropdown nav inNavbar>
 				<DropdownToggle nav caret>Tools</DropdownToggle>
 				<DropdownMenu>
-					<DropdownItem>
+					<DropdownItem on:click={() => downloadPage()}>
 						<Icon name="download" class="me-3" />
 						Download Current Page
 					</DropdownItem>
-					<DropdownItem>
+					<DropdownItem on:click={() => downloadManga()}>
 						<Icon name="download" class="me-3" />
 						Download Manga
 					</DropdownItem>
 					<DropdownItem divider />
-					<DropdownItem>
+					<DropdownItem on:click={() => updateCover()}>
 						<Icon name="journal-arrow-up" class="me-3" />
 						Replace Cover
 					</DropdownItem>
@@ -209,13 +216,13 @@
 		</Nav>
 		<Nav class="ms-auto" navbar>
 			<NavItem class="me-3">
-				<FavoriteButton on:click={()=>toggleFavorite()} isFavorite={response.favorite}>
+				<FavoriteButton on:click={() => toggleFavorite()} isFavorite={response.favorite}>
 					Favorite
 				</FavoriteButton>
 			</NavItem>
 			<NavItem>
-				<Button on:click={()=>goto(previousPage)} color="danger">
-					<Icon name="x-circle" class=" me-3"/> Close
+				<Button on:click={() => goto(previousPage)} color="danger">
+					<Icon name="x-circle" class=" me-3" /> Close
 				</Button>
 			</NavItem>
 		</Nav>

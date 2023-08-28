@@ -307,7 +307,7 @@
 				</NavItem>
 			</Nav>
 			<Nav class="ms-auto me-3" navbar>
-				<NavItem hidden={request.tag == ''? true: undefined}>
+				<NavItem hidden={request.tag == '' ? true : undefined}>
 					<FavoriteButton on:click={() => onTagFavorite()} isFavorite={response.tag_favorite}>
 						Favorite tag
 					</FavoriteButton>
