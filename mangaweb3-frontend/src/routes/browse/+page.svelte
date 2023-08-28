@@ -29,6 +29,8 @@
 	import { goto } from '$app/navigation';
 	import FavoriteButton from '$lib/FavoriteButton.svelte';
 
+	console.log(variables.basePath)
+
 	interface Request {
 		favorite_only: boolean;
 		item_per_page: number;
