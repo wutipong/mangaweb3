@@ -12,8 +12,8 @@
     on:click
 >
 	{#if isFavorite}
-		<span><Icon name="star" class="mb-3" /> <slot /></span>
+		<span><Icon name="star-fill" class="me-3" /> <slot /></span>
 	{:else}
-		<span><Icon name="star-open" class="mb-3" /> <slot /></span>
+		<span><Icon name="star" class="me-3" /> <slot /></span>
 	{/if}
 </button>

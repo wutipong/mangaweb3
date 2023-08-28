@@ -317,7 +317,9 @@
 				<NavItem>
 					<InputGroup>
 						<Input type="text" bind:value={request.search} />
-						<Button on:click={() => onSearchClick()}>Search</Button>
+						<Button on:click={() => onSearchClick()}
+							><Icon name="search" class="me-3" />Search</Button
+						>
 					</InputGroup>
 				</NavItem>
 			</Nav>

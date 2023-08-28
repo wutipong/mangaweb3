@@ -208,14 +208,14 @@
 			</NavItem>
 		</Nav>
 		<Nav class="ms-auto" navbar>
-			<NavItem>
+			<NavItem class="me-3">
 				<FavoriteButton on:click={()=>toggleFavorite()} isFavorite={response.favorite}>
 					Favorite
 				</FavoriteButton>
 			</NavItem>
 			<NavItem>
-				<Button on:click={()=>goto(previousPage)}>
-					<Icon name="x" class=" me-3" color="danger" /> Close
+				<Button on:click={()=>goto(previousPage)} color="danger">
+					<Icon name="x-circle" class=" me-3"/> Close
 				</Button>
 			</NavItem>
 		</Nav>
