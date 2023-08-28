@@ -1,13 +1,12 @@
 <script lang="ts">
 	import { getBackendBaseURL } from '$lib/config';
 	import AboutDialog from '$lib/AboutDialog.svelte';
+	import FavoriteButton from '$lib/FavoriteButton.svelte';
 	import ImageViewer from './ImageViewer.svelte';
 	import PageScroll from './PageScroll.svelte';
 	import Toast from '$lib/Toast.svelte';
-	import Toolbar from './Toolbar.svelte';
 	import { onMount } from 'svelte';
 	import {
-		Spinner,
 		Icon,
 		Collapse,
 		Navbar,
@@ -20,9 +19,6 @@
 		DropdownToggle,
 		DropdownMenu,
 		DropdownItem,
-		InputGroup,
-		InputGroupText,
-		Input,
 		Button
 	} from 'sveltestrap';
 	import { page } from '$app/stores';
@@ -213,9 +209,9 @@
 		</Nav>
 		<Nav class="ms-auto" navbar>
 			<NavItem>
-				<Button>
-					<Icon name="star-fill" class=" me-3" /> Favorite tag
-				</Button>
+				<FavoriteButton on:click={()=>toggleFavorite()} isFavorite={response.favorite}>
+					Favorite
+				</FavoriteButton>
 			</NavItem>
 			<NavItem>
 				<Button on:click={()=>goto(previousPage)}>

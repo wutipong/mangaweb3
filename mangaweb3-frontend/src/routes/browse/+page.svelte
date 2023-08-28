@@ -28,6 +28,7 @@
 	import Toast from '$lib/Toast.svelte';
 	import Toolbar from './Toolbar.svelte';
 	import { goto } from '$app/navigation';
+	import FavoriteButton from '$lib/FavoriteButton.svelte';
 
 	interface Request {
 		favorite_only: boolean;
@@ -307,9 +308,9 @@
 			</Nav>
 			<Nav class="ms-auto" navbar>
 				<NavItem hidden={request.tag != ''}>
-					<Button on:click={() => onTagFavorite()}>
-						<Icon name="star-fill" class="me-3" /> Favorite tag
-					</Button>
+					<FavoriteButton on:click={() => onTagFavorite()} isFavorite={response.tag_favorite}>
+						Favorite tag
+					</FavoriteButton>
 				</NavItem>
 			</Nav>
 			<Nav navbar>
