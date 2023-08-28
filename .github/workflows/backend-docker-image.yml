@@ -5,10 +5,10 @@ on:
     types: [published]
 
   push:
-    branches: [master]
+    branches: ["main"]
 
   pull_request:
-    branches: [ master ]
+    branches: [ "main" ]
 
 jobs:
   push_to_registry:
