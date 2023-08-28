@@ -33,7 +33,7 @@
 	let viewer: ImageViewer;
 
 	interface Request {
-		path: string;
+		name: string;
 	}
 
 	interface Response {
@@ -44,7 +44,7 @@
 	}
 
 	let request: Request = {
-		path: ''
+		name: ''
 	};
 
 	let response: Response = {
@@ -57,7 +57,7 @@
 	onMount(async () => {
 		const params = $page.url.searchParams;
 		if (params.has('name')) {
-			request.path = params.get('name') as string;
+			request.name = params.get('name') as string;
 		}
 
 		const url = new URL('/view', getBackendBaseURL());
@@ -92,7 +92,7 @@
 	async function toggleFavorite() {
 		const req = {
 			favorite: !response.favorite,
-			name: request.path
+			name: request.name
 		};
 
 		const url = new URL('/view/set_favorite', getBackendBaseURL());
@@ -113,7 +113,7 @@
 		const url = new URL('/view/update_cover', getBackendBaseURL());
 		const req = {
 			index: current,
-			name: request.path
+			name: request.name
 		};
 
 		const resp = await fetch(url, { method: 'POST', body: JSON.stringify(req) });
@@ -166,14 +166,14 @@
 
 <div class="fullscreen" style="padding-top:80px;">
 	<ImageViewer
-		imageURLs={createImageUrls(request.path, response.indices)}
+		imageURLs={createImageUrls(request.name, response.indices)}
 		{onIndexChange}
 		bind:this={viewer}
 	/>
 </div>
 
 <Navbar color="dark" dark expand="md" sticky={'top'}>
-	<NavbarBrand href="/">{`View ${request.path}`}</NavbarBrand>
+	<NavbarBrand href="/">{`View ${request.name}`}</NavbarBrand>
 	<NavbarToggler on:click={() => (navbarToggleOpen = !navbarToggleOpen)} />
 	<Collapse isOpen={navbarToggleOpen} navbar expand="md" on:update={handleUpdate}>
 		<Nav navbar>
