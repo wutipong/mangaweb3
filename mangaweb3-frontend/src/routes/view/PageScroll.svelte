@@ -52,5 +52,6 @@
         --bs-btn-disabled-color: #fff;
         --bs-btn-disabled-bg: #375a7f;
         --bs-btn-disabled-border-color: #375a7f;
+        border-color: transparent;
     }
 </style>
