@@ -2,7 +2,25 @@
 	import { getBackendBaseURL } from '$lib/config';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import { Spinner, Icon } from 'sveltestrap';
+	import {
+		Spinner,
+		Icon,
+		Collapse,
+		Navbar,
+		NavbarToggler,
+		NavbarBrand,
+		Nav,
+		NavItem,
+		NavLink,
+		Dropdown,
+		DropdownToggle,
+		DropdownMenu,
+		DropdownItem,
+		InputGroup,
+		InputGroupText,
+		Input,
+		Button
+	} from 'sveltestrap';
 	import AboutDialog from '$lib/AboutDialog.svelte';
 	import Item from './Item.svelte';
 	import MoveToTop from '$lib/MoveToTop.svelte';
@@ -184,31 +202,61 @@
 		$page.url.searchParams.set('page', i.toString());
 		promise = loadData();
 	}
+
+	let navbarToggleOpen = false;
+	function handleUpdate(event: CustomEvent<boolean>) {
+		navbarToggleOpen = event.detail;
+	}
 </script>
 
 {#await promise}
 	<div><Spinner type="grow" /> Loading ...</div>
 {:then}
-	<Toolbar
-		Title={request.tag == '' ? 'Browse' : `Browse ${request.tag}`}
-		BrowseURL={new URL('/browse', $page.url.origin).toString()}
-		TagListURL={new URL('/tags', $page.url.origin).toString()}
-		SortBy={request.sort}
-		SortOrder={request.order}
-		FavoriteOnly={request.favorite_only}
-		Tag={request.tag}
-		TagFavorite={response.tag_favorite}
-		{changeSort}
-		{changeOrder}
-		{onFilterFavorite}
-		{rescanLibrary}
-		{onTagFavorite}
-		{onSearchClick}
-		SearchText={request.search}
-		{onAboutClick}
-	/>
+	<Navbar color="dark" dark expand="md" sticky={'top'}>
+		<NavbarBrand href="/">{request.tag == '' ? 'Browse' : `Browse ${request.tag}`}</NavbarBrand>
+		<NavbarToggler on:click={() => (navbarToggleOpen = !navbarToggleOpen)} />
+		<Collapse isOpen={navbarToggleOpen} navbar expand="md" on:update={handleUpdate}>
+			<Nav navbar>
+				<Dropdown nav inNavbar>
+					<DropdownToggle nav caret>Browse</DropdownToggle>
+					<DropdownMenu end>
+						<DropdownItem><Icon name="list-ul" class="me-3" /> All items</DropdownItem>
+						<DropdownItem><Icon name="tags-fill" class="me-3" /> Tag list</DropdownItem>
+					</DropdownMenu>
+				</Dropdown>
+				<Dropdown nav inNavbar>
+					<DropdownToggle nav caret>Sort By</DropdownToggle>
+					<DropdownMenu end>
+						<DropdownItem><Icon name="type" class="me-3" /> Name</DropdownItem>
+						<DropdownItem><Icon name="clock" class="me-3" /> Create Time</DropdownItem>
+						<DropdownItem divider />
+						<DropdownItem><Icon name="sort-down-alt" class="me-3" />Ascending</DropdownItem>
+						<DropdownItem><Icon name="sort-up-alt" class="me-3" /> Descending</DropdownItem>
+					</DropdownMenu>
+				</Dropdown>
+				<NavItem>
+					<NavLink on:click={()=>aboutDialog.show()}>About</NavLink>
+				</NavItem>
+			</Nav>
+			<Nav class="ms-auto" navbar>
+				<NavItem>
+					<Button>
+						<Icon name="star-fill" class=" me-3" /> Favorite tag
+					</Button>
+				</NavItem>
+			</Nav>
+			<Nav navbar>
+				<NavItem>
+					<InputGroup>
+						<Input type="text" />
+						<Button>Search</Button>
+					</InputGroup>
+				</NavItem>
+			</Nav>
+		</Collapse>
+	</Navbar>
 
-	<div class="container-fluid" style="padding-top:100px;">
+	<div class="container-fluid" style="padding-top:30px;">
 		<div class="grid-container">
 			{#each response.items as item}
 				<Item
