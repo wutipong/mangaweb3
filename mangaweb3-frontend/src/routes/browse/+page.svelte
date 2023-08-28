@@ -146,13 +146,9 @@
 	}
 
 	function onFilterFavorite() {
-		let url = $page.url;
-		let searchParams = new URLSearchParams(url.search);
-
-		let isFavorite = request.favorite_only;
-		searchParams.set('favorite', (!isFavorite).toString());
-
-		url.search = searchParams.toString();
+		request.favorite_only = !request.favorite_only;
+		request.page = 0;
+		invalidate(request);
 	}
 
 	async function rescanLibrary() {
@@ -236,8 +232,13 @@
 			<Nav navbar>
 				<Dropdown nav inNavbar>
 					<DropdownToggle nav caret>Browse</DropdownToggle>
-					<DropdownMenu end>
-						<DropdownItem on:click={()=> {request = defaultRequest(); invalidate(request)}}>
+					<DropdownMenu>
+						<DropdownItem
+							on:click={() => {
+								request = defaultRequest();
+								invalidate(request);
+							}}
+						>
 							<Icon name="list-ul" class="me-3" /> All items
 						</DropdownItem>
 						<DropdownItem on:click={() => goto(new URL('/tags', $page.url.origin).toString())}>
@@ -247,7 +248,7 @@
 				</Dropdown>
 				<Dropdown nav inNavbar>
 					<DropdownToggle nav caret>Sort By</DropdownToggle>
-					<DropdownMenu end>
+					<DropdownMenu>
 						<DropdownItem active={request.sort == 'name'} on:click={() => changeSort('name')}>
 							<Icon name="type" class="me-3" /> Name
 						</DropdownItem>
@@ -269,6 +270,22 @@
 							on:click={() => changeOrder('descending')}
 						>
 							<Icon name="sort-up-alt" class="me-3" /> Descending
+						</DropdownItem>
+					</DropdownMenu>
+				</Dropdown>
+				<Dropdown nav inNavbar>
+					<DropdownToggle nav caret>Filter</DropdownToggle>
+					<DropdownMenu>
+						<DropdownItem active={request.favorite_only} on:click={() => onFilterFavorite()}>
+							<Icon name="star" class="me-3" /> Favorite
+						</DropdownItem>
+					</DropdownMenu>
+				</Dropdown>
+				<Dropdown nav inNavbar>
+					<DropdownToggle nav caret>Tools</DropdownToggle>
+					<DropdownMenu>
+						<DropdownItem on:click={() => rescanLibrary()}>
+							<Icon name="arrow-clockwise" class="me-3" /> Rescan library
 						</DropdownItem>
 					</DropdownMenu>
 				</Dropdown>
