@@ -21,9 +21,14 @@
 		DropdownItem
 	} from 'sveltestrap';
 	import Toast from '$lib/Toast.svelte';
+	import Pagination from '$lib/Pagination.svelte';
 	import { goto } from '$app/navigation';
 
 	export let data: PageData;
+
+	$: current_page = data.page;
+	$: tags = data.tags;
+	$: total_page = data.total_page;
 
 	let favoriteOnly = false;
 	let aboutDialog: AboutDialog;
@@ -47,6 +52,13 @@
 			'Re-create thumbnail',
 			'Thumbnails recreating in progress. Please refresh after a few minutes.'
 		);
+	}
+
+	function onPageClick(i: number) {
+		let url = new URL($page.url);
+		url.searchParams.set('page', i.toString());
+
+		goto(url.toString());
 	}
 </script>
 
@@ -99,7 +111,7 @@
 <Container fluid style="padding-top:30px;">
 	<div class="grid-container">
 		<div class="row row-cols-1 row-cols-md-3 row-cols-lg-5 g-3">
-			{#each data.tags as tag}
+			{#each tags as tag}
 				{#if !favoriteOnly || (favoriteOnly && tag.favorite)}
 					<div class="col">
 						<Item {tag} />
@@ -109,6 +121,10 @@
 		</div>
 	</div>
 </Container>
+
+<div aria-label="Page navigation" class="position-fixed bottom-0 start-50 p-3 translate-middle-x">
+	<Pagination bind:currentPage={current_page} bind:totalPage={total_page} />
+</div>
 
 <AboutDialog bind:this={aboutDialog} version={'development'} />
 

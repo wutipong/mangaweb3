@@ -10,7 +10,9 @@ interface listRequest {
 
 interface listResponse {
     tags: Tag[]
+    total_page: number
 }
+export const prerender = false;
 
 export const load: PageLoad = async ({ fetch, url }) => {
     const tagListURL = new URL("/tag/list", variables.basePath);
@@ -35,12 +37,11 @@ export const load: PageLoad = async ({ fetch, url }) => {
     }
 
     const response = await fetch(tagListURL, { method: 'POST', body: JSON.stringify(request) });
-
     const obj = await response.json() as listResponse;
 
     return {
         page: request.page,
         tags: obj?.tags as Tag[],
-        total_page: obj.tags
+        total_page: obj?.total_page
     };
 };

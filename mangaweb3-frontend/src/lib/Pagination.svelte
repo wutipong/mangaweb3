@@ -1,27 +1,21 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
 	import { Pagination, PaginationItem, PaginationLink } from 'sveltestrap';
 
 	export let currentPage = 0;
 	export let totalPage = 1;
 	export let pageToShow = 5;
-	export let onPageClick = (i: number): void => {};
 
 	interface Page {
 		url: URL;
 		index: number;
-	}
+	};
 
-	let numberUrls: Page[] = [];
+	let numberUrls:Page[] = [];
 	let firstUrl: URL;
 	let lastUrl: URL;
 
-	onMount(() => {
-		if (totalPage == 0) {
-			return;
-		}
-
+	$: if(totalPage != 0) {
 		firstUrl = new URL($page.url);
 		firstUrl.searchParams.set('page', '0');
 
@@ -33,40 +27,39 @@
 		const startPage = currentPage - halfCount;
 		const endPage = startPage + pageToShow;
 
+		let items: Page[] = []
 		for (let i = startPage; i < endPage; i++) {
 			if (i < 0 || i >= totalPage) continue;
 
 			const url = new URL($page.url);
 			url.searchParams.set('page', `${i}`);
 
-			numberUrls = [
-				...numberUrls,
+			items = [
+				...items,
 				{
 					url: url,
 					index: i
 				}
 			];
 		}
-	});
+		numberUrls = items
+	};
 </script>
 
 <Pagination>
 	<PaginationItem>
-		<PaginationLink first on:click={() => onPageClick(0)} href={firstUrl?.toString()} />
+		<PaginationLink first href={firstUrl?.toString()} />
 	</PaginationItem>
 
 	{#each numberUrls as u}
 		<PaginationItem active={u.index == currentPage}>
-			<PaginationLink
-				on:click={() => {
-					onPageClick(u.index);
-				}}
-				href={u.url.toString()}>{u.index}</PaginationLink
-			>
+			<PaginationLink href={u.url.toString()}>
+				{u.index}
+			</PaginationLink>
 		</PaginationItem>
 	{/each}
 
 	<PaginationItem>
-		<PaginationLink last on:click={() => onPageClick(totalPage - 1)} href={lastUrl?.toString()} />
+		<PaginationLink last href={lastUrl?.toString()} />
 	</PaginationItem>
 </Pagination>

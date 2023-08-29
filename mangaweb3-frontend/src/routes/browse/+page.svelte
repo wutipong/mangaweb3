@@ -24,7 +24,7 @@
 	import AboutDialog from '$lib/AboutDialog.svelte';
 	import Item from './Item.svelte';
 	import MoveToTop from '$lib/MoveToTop.svelte';
-	import Pagination from './Pagination.svelte';
+	import Pagination from '$lib/Pagination.svelte';
 	import Toast from '$lib/Toast.svelte';
 	import { goto } from '$app/navigation';
 	import FavoriteButton from '$lib/FavoriteButton.svelte';
