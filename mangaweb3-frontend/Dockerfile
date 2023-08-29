@@ -8,4 +8,4 @@ RUN npm ci
 RUN npm run build
 
 EXPOSE 5173
-CMD ["node", "-r", "detenv/config", "build"]
+CMD ["node", "-r", "dotenv/config", "build"]
