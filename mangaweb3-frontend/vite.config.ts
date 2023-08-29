@@ -8,6 +8,6 @@ export default defineConfig({
 		include: ['src/**/*.{test,spec}.{js,ts}']
 	},
 	envPrefix:[
-		'VITE_', 'MANGAWEB_'
+		'VITE_',
 	]
 });

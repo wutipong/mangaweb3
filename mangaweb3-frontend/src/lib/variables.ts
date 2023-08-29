@@ -1,3 +1,3 @@
 export const variables = {
-    basePath: import.meta.env.MANGAWEB_BACKEND_URL
+    basePath: import.meta.env.VITE_BACKEND_URL
 };
