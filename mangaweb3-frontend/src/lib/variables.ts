@@ -1,3 +1,5 @@
+import { env } from '$env/dynamic/public';
+
 export const variables = {
-    basePath: import.meta.env.VITE_BACKEND_URL
+    basePath: env.PUBLIC_BACKEND_URL
 };
