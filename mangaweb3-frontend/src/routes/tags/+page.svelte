@@ -18,7 +18,7 @@
 		Dropdown,
 		DropdownToggle,
 		DropdownMenu,
-		DropdownItem,
+		DropdownItem
 	} from 'sveltestrap';
 	import Toast from '$lib/Toast.svelte';
 	import { goto } from '$app/navigation';
@@ -28,17 +28,6 @@
 	let favoriteOnly = false;
 	let aboutDialog: AboutDialog;
 	let toast: Toast;
-
-	function toggleFavoriteOnly() {
-		favoriteOnly = !favoriteOnly;
-	}
-
-	function createThumbnailUrl(name: string) {
-		const output = new URL('/tag/thumbnail', variables.basePath);
-		output.searchParams.append('tag', name);
-
-		return output;
-	}
 
 	function createBrowseURL(name: string) {
 		const output = new URL('/browse', $page.url.origin);
@@ -72,19 +61,24 @@
 					<DropdownItem
 						on:click={() => {
 							goto(createBrowseURL(''));
-						}}><Icon name="list-ul" class="me-3" /> All items</DropdownItem
+						}}
 					>
-					<DropdownItem on:click={() => goto($page.url)}
-						><Icon name="tags-fill" class="me-3" /> Tag list</DropdownItem
-					>
+						<Icon name="list-ul" class="me-3" />
+						All items
+					</DropdownItem>
+					<DropdownItem on:click={() => goto($page.url)}>
+						<Icon name="tags-fill" class="me-3" />
+						Tag list
+					</DropdownItem>
 				</DropdownMenu>
 			</Dropdown>
 			<Dropdown nav inNavbar>
 				<DropdownToggle nav caret>Filter</DropdownToggle>
 				<DropdownMenu>
-					<DropdownItem on:click={() => (favoriteOnly = !favoriteOnly)} active={favoriteOnly}
-						><Icon name="star" class="me-3" /> Favorite</DropdownItem
-					>
+					<DropdownItem on:click={() => (favoriteOnly = !favoriteOnly)} active={favoriteOnly}>
+						<Icon name="star" class="me-3" />
+						Favorite
+					</DropdownItem>
 				</DropdownMenu>
 			</Dropdown>
 			<Dropdown nav inNavbar>
@@ -108,13 +102,7 @@
 			{#each data.tags as tag}
 				{#if !favoriteOnly || (favoriteOnly && tag.favorite)}
 					<div class="col">
-						<Item
-							name={tag.name}
-							favorite={tag.favorite}
-							id={tag.id.toString()}
-							url={createBrowseURL(tag.name).toString()}
-							thumbnailURL={createThumbnailUrl(tag.name).toString()}
-						/>
+						<Item {tag} />
 					</div>
 				{/if}
 			{/each}
